@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import video_banner from '../../assets/img/video-banner-bg.jpg';
-import video1 from '../../assets/img/v1.jpg';
-import video2 from '../../assets/img/v2.jpg';
 import graph1 from '../../assets/img/graph-1.png';
 
 class Video extends Component{
@@ -11,11 +9,6 @@ class Video extends Component{
             isHide:false
         }
     }
-
-
-
-
- 
 render(){
             return(
                 <div className="video-section">
@@ -61,7 +54,8 @@ render(){
                             
                             <div class="col-md-6">
                             <div class="video-box">
-                                <img src={video1} alt=""/>
+                                {/* <img src={video1} alt=""/> */}
+                                <iframe src="https://player.vimeo.com/video/350372529" width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
                             </div>
                             </div>
                             </div>
@@ -86,8 +80,9 @@ render(){
                         
                         <div class="col-md-6">
                         <div class="video-box">
-                        <img src={video2} alt=""/>
-                            </div>
+                        {/* <img src={video2} alt=""/> */}
+                        <iframe title="vimeo-player" src="https://player.vimeo.com/video/350372584" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+                       </div>
                         </div>
                         </div>
                     </div>

@@ -10,7 +10,8 @@ exports.addRegisterTODb = async (req, res, next) => {
         investor: req.body.investor,
         financial: req.body.financial,
         professor: req.body.professor,
-        tell_us_more: req.body.tell_us_more
+        tell_us_more: req.body.tell_us_more,
+        role: req.body.role
     }); 
 
 
@@ -55,8 +56,13 @@ exports.getUserLoginTODb = async (req, res, next) => {
     .then(data => {
         if (data) {
             console.log('login data', data);
+            console.log('ddd: ',data.role);
+            const userrole = data.role;
             const token = jwt.sign({
                 email: data.email,
+                name: data.name,
+                username: data.username,
+                role: data.role,
                 _id: data._id
             },
                 '@' + data._id + '-' + data.email,
@@ -65,7 +71,10 @@ exports.getUserLoginTODb = async (req, res, next) => {
                 });
             res.status(201).json({
                 message: "Loged In",
-                token: token
+                role: userrole,
+                email: data.email,
+                test: 'nnnnn',
+                token: token 
             });
         } else {
             res.status(201).json({

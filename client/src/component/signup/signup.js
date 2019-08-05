@@ -22,7 +22,7 @@ class Signup extends Component{
         this.LoginMe = this.LoginMe.bind(this);
         this.resetForm = this.resetForm.bind(this);
         this.LoginMevalidationCheck = this.LoginMevalidationCheck.bind(this);
-    }
+}
 
 
 onSubmit = () => {
@@ -87,7 +87,12 @@ LoginMe(e){
     API.login(userInfoVo)
         .then((result) => {
             console.log('xxx ', result);
-            this.props.history.replace('/');
+           if( result.data.role == 0){
+                this.props.history.replace('/admin/dashboard');
+           }else{
+                this.props.history.replace('/front/profile');
+           }
+
         }).catch(err => {
             console.log('xxx', err);
         })
@@ -206,7 +211,8 @@ registerMe(e){
             'financial': this.state.fields.financial,
             'professor': this.state.fields.professor,
             'other': this.state.fields.other,
-            'tell_us_more': this.state.fields.tell_us_more
+            'tell_us_more': this.state.fields.tell_us_more,
+            'role': this.refs.role.value
         }
         API.registerUser(userInfoVo)
         .then((result) => {
@@ -240,11 +246,14 @@ registerMe(e){
 
 registerSubscribe(){
     if(this.registerSubscribevalidationCheck()){ 
-        let  password = Math.random().toString(36).slice(-8);                  
+        let  password = Math.random().toString(36).slice(-8); 
+        let username = this.state.fields.email.split("@");                 
         const userInfoVo ={
             'name': this.state.fields.name,
             'email': this.state.fields.email,
-            'password': password
+            'role': this.refs.role.value,
+            'password': password,
+            'username': username[0]
         }
         API.registerUser(userInfoVo)
         .then((result) => {
@@ -339,7 +348,8 @@ render(){
                                         <div className="account-form-content">
                                            <form>
                                             <div className="account-form-content-top">
-                                                
+                                                    <input  name="role" ref="role" defaultValue="1"  onChange={this.registerMehandleChange.bind(this, "role")} type="hidden"  placeholder="role"/> 
+                                                    
                                                     <div className="form-group">
                                                         <input  name="name"  value={this.state.fields["name"] ? this.state.fields["name"] :'' } onChange={this.registerMehandleChange.bind(this, "name")} type="name" className={this.state.errors["name"] ? this.state.errors["name"] : 'form-control'}  placeholder="Name"/>
                                                     </div>
