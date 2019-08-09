@@ -3242,6 +3242,9 @@ button.btn.btn-success.btn-sm {
   background: #5eb35e;
   color: #fff;
 }
+section#main-dashboard {
+  padding-bottom: 50px;
+}
 @media only screen and (max-width: 992px) {
   .tranbg {
     background-color: #fff !important;

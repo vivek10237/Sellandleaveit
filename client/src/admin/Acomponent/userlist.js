@@ -31,13 +31,13 @@ componentDidMount(){
 getAllUser() {
   AdminAPI.getUserAll()
         .then(res => {
-          console.log('userServic..xx:', res.data.data);
-          console.log('userServic:', res.data.data[0].name);
+          //console.log('userServic..xx:', res.data.data);
+          //console.log('userServic:', res.data.data[0].name);
           RowArray = [];
-          for(let i=1; i<res.data.data.length; i++){
-            RowArray.push({name:res.data.data[i].name,email:res.data.data[i].email,action:[<Button onClick={this.EditUser.bind(this, res.data.data[i])} variant="success" size="sm"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></Button>,<Button  variant="danger" size="sm"><i class="fa fa-trash-o" aria-hidden="true"></i></Button>]}) 
+          for(let i=0; i<res.data.data.length; i++){
+            RowArray.push({name:res.data.data[i].name,email:res.data.data[i].email,action:[<Button onClick={this.EditUser.bind(this, res.data.data[i])} variant="success" size="sm"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></Button>,<Button onClick={this.delUser.bind(this, res.data.data[i]._id, i)} variant="danger" size="sm"><i class="fa fa-trash-o" aria-hidden="true"></i></Button>]}) 
           }
-          console.log('userServicArray:', RowArray);
+          //console.log('userServicArray:', RowArray);
           this.setState({ users: RowArray });
         }).catch(err => {
             console.log('xxxxxxx xxxx ', err);
@@ -49,8 +49,48 @@ handleHide() {
   this.setState({ show: false });
 }
 
+
+delUser(id) {
+        console.log('userid: ',id);
+  AdminAPI.AdmindeleteUserById(id)
+      .then(res => {
+         this.getAllUser();
+          console.log('xxxxxxxx', res);
+          if (res.data.success) {
+              this.setState({
+                  showAlert: true,
+                  color: 'success',
+                  message: res.data.message
+
+              });
+
+              setTimeout(
+                  function () {
+                      this.setState({ showAlert: false });
+                  }
+                      .bind(this),
+                  2000
+              );
+
+          } else {
+              this.setState({
+                  showAlert: true,
+                  color: 'warning',
+                  message: res.data.message
+
+              });
+
+          }
+
+      }).catch(err => {
+          console.log('xxxxxxxxxx xxxxxxxxx err from com ' + err)
+      });
+
+}
+
+
 EditUser(user) {
-  console.log('xxxxxxx xxxx user data ', user);
+ // console.log('xxxxxxx xxxx user data ', user);
   this.setState({
       show: true,
       userDetails: user
@@ -66,10 +106,10 @@ handleUpdateSubmit() {
   }
 AdminAPI.AdminEditUserInfo(userInfoVo)
 .then((result) => {
-    console.log('xxxhsdfgjasj: ', result);
+    //console.log('xxxhsdfgjasj: ', result);
    
     this.getAllUser();
-    console.log('getUser:',this.getAllUser());
+    //console.log('getUser:',this.getAllUser());
     if (result.data.success) {
         this.setState({
             showAlert: true,
@@ -98,7 +138,7 @@ AdminAPI.AdminEditUserInfo(userInfoVo)
 }).catch(err => {
     console.log('xxx', err);
 });
-console.log('xxxxxxxxx', userInfoVo);
+//console.log('xxxxxxxxx', userInfoVo);
 }
 
 handleChange(field, e) {
@@ -138,8 +178,10 @@ render(){
             <Adminsidebar />
             <div class="dashboard-content">
               <div className="heading"><h4>User lists</h4></div>
-          
+              
               <div class="edit-form-main">
+              {this.state.showAlert ? (<Alert bsStyle={this.state.color}><strong>{this.state.message}</strong></Alert> ) : ( null )}
+
                  <MDBDataTable striped bordered hover data={data}  />
               </div>
               <Modal
@@ -155,8 +197,7 @@ render(){
             </Modal.Title>
                             </Modal.Header>
                             <Modal.Body>
-                                  {this.state.showAlert ? (<Alert bsStyle={this.state.color}><strong>{this.state.message}</strong></Alert> ) : ( null )}
-
+                                 
                                     <div className="form-group">
                                         <label>Name</label>
                                         <input className="form-control" onChange={this.handleChange.bind(this, "id")} type="hidden" ref="id" id="id" name="id" defaultValue={this.state.userDetails._id} />
@@ -164,7 +205,7 @@ render(){
                                     </div>
                                     <div className="form-group">
                                         <label>Email Address</label>
-                                        <input className="form-control" onChange={this.handleChange.bind(this, "email")} ref="email" type="email" id="email" name="email" defaultValue={this.state.userDetails.email} placeholder="Enter your email address" required="" />
+                                        <input className="form-control" readOnly onChange={this.handleChange.bind(this, "email")} ref="email" type="email" id="email" name="email" defaultValue={this.state.userDetails.email} placeholder="Enter your email address" required="" />
                                     </div>
                                     {/* <div className="form-group">
                                         <label>Message</label>

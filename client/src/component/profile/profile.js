@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {withRouter, BrowserRouter as Router } from 'react-router-dom'
 import UserService from '../../reactservice/UserService'
 const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const API = new UserService();
@@ -88,6 +89,11 @@ updateMehandleChange(field, e) {
     console.log('updatefields..xx...xx:', fields);
 }
 
+logout = () => {
+    API.logout();
+    this.props.history.replace('/front/signup');
+}
+
 
 render(){
         return(
@@ -111,9 +117,9 @@ render(){
                                             <li class="is-active">
                                                 <a href="dashboard.html"><i class="fa fa-user-circle aj_fa" aria-hidden="true"></i>My details</a>
                                             </li>
-                                            {/* <li>
-                                                <a href="my-address-book.html"><i class="fa fa-address-book aj_fa" aria-hidden="true"></i>My address book</a>
-                                            </li> */}
+                                            <li class="is-active">
+                                                <a href="javascript:void(0)" onClick={this.logout.bind(this)}><i class="fa fa-address-book aj_fa" aria-hidden="true"></i>Logout</a>
+                                            </li>
                                         </ul>
                                     </nav>
                                 </div>
@@ -134,29 +140,30 @@ render(){
                                                     <div class="col-md-6 col-sm-12">
                                                         <div class="form-group">
                                                             <label>Name</label>
-                                                            <input type="text" ref="name" class={this.state.errors["name"] ? this.state.errors["name"] : 'form-control'} name="name" placeholder="Name" onChange={this.updateMehandleChange.bind(this, "name")}  defaultValue={API.getProfile().name}/>
+                                                            <input type="text" ref="name" class={this.state.errors["name"] ? this.state.errors["name"] : 'form-control'} name="name" placeholder="Name" onChange={this.updateMehandleChange.bind(this, "name")}  defaultValue={API.getProfile().data.name}/>
                                                         </div>
                                                     </div>
 
                                                     <div class="col-md-6 col-sm-12">
                                                         <div class="form-group">
                                                             <label>Email</label>
-                                                            <input type="text" ref="email" class={this.state.errors["email"] ? this.state.errors["email"] : 'form-control'} name="email" placeholder="email" onChange={this.updateMehandleChange.bind(this, "email")} defaultValue={API.getProfile().email}/>
+                                                            <input type="text" ref="email" class={this.state.errors["email"] ? this.state.errors["email"] : 'form-control'} name="email" placeholder="email" onChange={this.updateMehandleChange.bind(this, "email")} defaultValue={API.getProfile().data.email}/>
                                                         </div>
                                                     </div>
 
                                                     <div class="col-md-6 col-sm-12">
                                                         <div class="form-group">
                                                             <label>Username</label>
-                                                            <input type="text" readOnly ref="username" class="form-control" name="username" onChange={this.updateMehandleChange.bind(this, "username")} defaultValue={API.getProfile().username}/>
+                                                            <input type="text" readOnly ref="username" class="form-control" name="username" onChange={this.updateMehandleChange.bind(this, "username")} defaultValue={API.getProfile().data.username}/>
                                                         </div>
                                                     </div>
 
-                                                    <input type="hidden" ref="id" class="form-control" name="id" onChange={this.updateMehandleChange.bind(this, "id")} defaultValue={API.getProfile()._id}/>
+                                                    <input type="hidden" ref="id" class="form-control" name="id" onChange={this.updateMehandleChange.bind(this, "id")} defaultValue={API.getProfile().data._id}/>
 
                                                     
                                                     <div class="col-md-6 col-sm-12">
                                                         <div class="form-group">
+
                                                         </div>
                                                     </div>
 
@@ -194,4 +201,4 @@ render(){
   }
 }
 
-export default Profile;
+export default withRouter (Profile);

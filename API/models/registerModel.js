@@ -9,7 +9,8 @@ const regSchema = new Schema({
     financial:String,
     professor:String,
     tell_us_more:String,
-    role:String
+    role:String,
+    datetime:String
 
 });
 module.exports = mongoose.model('Register', regSchema);  

@@ -8,7 +8,9 @@ const contactSchema = new Schema({
     question: String,
     feedback: String,
     businesssynergy: String,
-    other: String
+    other: String,
+    datetime: String,
+    userid: String
 
 });
 module.exports = mongoose.model('Contactus', contactSchema);  

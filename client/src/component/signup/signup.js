@@ -13,7 +13,8 @@ class Signup extends Component{
             fields: [], 
             loginfields: [],            
             errors: {},
-            showAlert:false
+            showAlert:false,
+            loginshowAlert:false
         }
         this.toggleClass = this.toggleClass.bind(this);
         this.FormtoggleClass = this.FormtoggleClass.bind(this);
@@ -83,15 +84,24 @@ LoginMe(e){
         'email': this.state.loginfields.loginemail,
         'password': this.state.loginfields.loginpassword
     }
-    console.log('xxxxxxxxxxxx login', userInfoVo);
+   // console.log('xxxxxxxxxxxx login', userInfoVo);
     API.login(userInfoVo)
         .then((result) => {
-            console.log('xxx ', result);
+           // console.log('xxx ', result);
+         if(result.data.success == true){
            if( result.data.role == 0){
                 this.props.history.replace('/admin/dashboard');
            }else{
                 this.props.history.replace('/front/profile');
            }
+        }else{
+                //console.log('message:', result.data.message);
+                this.setState({
+                    loginshowAlert:true,
+                    color:'#b31313d6',
+                    message: result.data.message
+                });
+        }
 
         }).catch(err => {
             console.log('xxx', err);
@@ -212,7 +222,8 @@ registerMe(e){
             'professor': this.state.fields.professor,
             'other': this.state.fields.other,
             'tell_us_more': this.state.fields.tell_us_more,
-            'role': this.refs.role.value
+            'role': this.refs.role.value,
+            'datetime':new Date()
         }
         API.registerUser(userInfoVo)
         .then((result) => {
@@ -253,7 +264,8 @@ registerSubscribe(){
             'email': this.state.fields.email,
             'role': this.refs.role.value,
             'password': password,
-            'username': username[0]
+            'username': username[0],
+            'datetime':new Date()
         }
         API.registerUser(userInfoVo)
         .then((result) => {
@@ -374,7 +386,7 @@ render(){
                                               
                                             </div>
 
-                                            <div  className={`red signup-box  ${this.state.open ? 'show' : 'hide'}`}>
+                                            <div  className={`signup-box  ${this.state.open ? 'show' : 'hide'}`}>
                                               
                                                     <div className="form-group">
                                                         <input  name="username"   value={this.state.fields["username"] ? this.state.fields["username"] : ''} onChange={this.registerMehandleChange.bind(this, "username")} type="text" className={this.state.errors["username"] ? this.state.errors["username"] : 'form-control'}    placeholder="Username"/>
@@ -431,6 +443,7 @@ render(){
                                                 <label onClick={this.FormtoggleClass} className="label-link" for="page1"> Sign-up here</label>
                                             </p>
                                         </div>
+                                        { this.state.loginshowAlert	? (<div style={{background:this.state.color}} className="Idmessage">{this.state.message}</div>) : '' }
                                         
                                         <div className="account-form-content">
                                             <div className="account-form-content-top">

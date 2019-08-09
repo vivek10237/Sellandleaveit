@@ -27,12 +27,18 @@ export default class RegisterService {
         return axios.post(this.domain + '/sellandleave/login', {
             email: email,
             pass: password
-        })
-            .then(result => {
-                console.log(result);
-                this.setToken(result.data.token);
-                return Promise.resolve(result);
-               
+        }).then(result => {
+               if(result.data.success == true){
+                    //console.log('lOGIN:', result);
+                    this.setToken(result.data.token);
+                    return Promise.resolve(result);
+               }else{
+                    //console.log('eRRO:', result);
+                    return result;
+               }
+            }).catch(err => {
+                console.log('xxxxxxx xxxxxxxxxxx err is::: ', err);
+                return (err);
             });
     }
     setToken(idToken) {

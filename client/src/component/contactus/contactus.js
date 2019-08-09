@@ -58,7 +58,7 @@ ContactusMe(e){
     console.log('first');
     if(this.contactusvalidationCheck()){ 
 
-         console.log('first');
+         console.log('first:', this.refs.id.value);
         const userInfoVo ={
             'name': this.state.fields.name,
             'email': this.state.fields.email,
@@ -67,7 +67,9 @@ ContactusMe(e){
             'question': this.state.fields.question,
             'feedback': this.state.fields.feedback,
             'business_synergy': this.state.fields.business_synergy,
-            'other': this.state.fields.other
+            'other': this.state.fields.other,
+            'datetime':new Date(),
+            'userid': this.refs.id.value
         }
         API.contactUsService(userInfoVo).then((result) => {
                 console.log('xxx res:', result );
@@ -95,6 +97,11 @@ contactushandleChange(field, e) {
 
     
 render(){
+
+    if (API.loggedIn()){
+        API.getProfile();
+    }
+
          return(
                 <div className="contact-section">
                      <section id="inner-page-banner">
@@ -148,7 +155,9 @@ render(){
                                                 <input type="email" for="email" onChange={this.contactushandleChange.bind(this, "email")} value={this.state.fields["email"] ? this.state.fields["email"] :'' } className={this.state.errors["email"] ? this.state.errors["email"] : 'form-control cstm-ct'} placeholder="Email"/>
                                             </div>
 
-                                            <div class="submit-btn">
+                                            <input type="hidden" ref="id" class="form-control" name="id" onChange={this.contactushandleChange.bind(this, "id")} defaultValue={API.loggedIn() ? API.getProfile().data._id : '0'}/>
+
+                                             <div class="submit-btn">
                                                 <button onClick={this.ContactusMe} type="button" class="btn"> Go </button>
                                             </div>
 

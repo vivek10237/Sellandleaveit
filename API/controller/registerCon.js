@@ -1,4 +1,5 @@
 const Register = require('../models/registerModel');
+const Activitylog = require('../models/useractivityModel');
 const jwt = require('jsonwebtoken');
 
 exports.addRegisterTODb = async (req, res, next) => { 
@@ -11,8 +12,10 @@ exports.addRegisterTODb = async (req, res, next) => {
         financial: req.body.financial,
         professor: req.body.professor,
         tell_us_more: req.body.tell_us_more,
-        role: req.body.role
+        role: req.body.role,
+        datetime: req.body.datetime
     }); 
+
 
 
     try {
@@ -23,7 +26,7 @@ exports.addRegisterTODb = async (req, res, next) => {
                 res.status(201).json({
                     data: user, 
                     success:false, 
-                    message:'User already exist !!'
+                    message:'Email already exist !!'
                 });
             }else{
                 let result = await reg.save();
@@ -33,6 +36,26 @@ exports.addRegisterTODb = async (req, res, next) => {
                             success:true, 
                             message:'User Signup Successfully !!'
                         });
+
+                        /*--- User activity log ---*/
+
+                        let userLogid = await Register.findOne({ email: req.body.email});
+                        const userLog = new Activitylog({
+                            userid: userLogid._id,
+                            name: userLogid.name,
+                            action: 'SignUp',
+                            datetime: new Date(),
+                            activitydata: 'Sign-up with email:'+userLogid.email
+                        }); 
+            
+                        let Logresult =  userLog.save();
+                        if (Logresult) {
+                            console.log('Activity Store');
+                        }else{
+                            console.log('No store');
+                        }
+                        
+
                     }
             }
 
@@ -54,16 +77,17 @@ exports.getUserLoginTODb = async (req, res, next) => {
     
     Register.findOne({ email: req.body.email.email, password: req.body.email.password })
     .then(data => {
+
+        console.log('logindata:', data);
         if (data) {
-            console.log('login data', data);
-            console.log('ddd: ',data.role);
             const userrole = data.role;
             const token = jwt.sign({
-                email: data.email,
-                name: data.name,
-                username: data.username,
-                role: data.role,
-                _id: data._id
+                // email: data.email,
+                // name: data.name,
+                // username: data.username,
+                // role: data.role,
+                data:data,
+               // _id: data._id
             },
                 '@' + data._id + '-' + data.email,
                 {
@@ -73,17 +97,38 @@ exports.getUserLoginTODb = async (req, res, next) => {
                 message: "Loged In",
                 role: userrole,
                 email: data.email,
-                test: 'nnnnn',
-                token: token 
+                token: token,
+                success: true 
             });
+
+              
+            /*--- User activity log ---*/
+
+            const userLog = new Activitylog({
+                userid: data._id,
+                name: data.name,
+                action: 'SignIn',
+                datetime: new Date(),
+                activitydata: 'Sign-in with email:'+data.email
+            }); 
+
+            let Logresult =  userLog.save();
+            if (Logresult) {
+                console.log('Activity Store');
+            }else{
+                console.log('No store');
+            }
+
         } else {
             res.status(201).json({
-                message: "Unauthorised",
+                message: "Invalid email and password please try again.",
+                success: false 
             });
         }
     }).catch(err => {
-        res.status(400).json({
-            message: err,
+        res.status(401).json({
+            message: 'Invalid user',
+            success:false
         });
     })
 }
